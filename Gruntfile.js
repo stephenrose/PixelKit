@@ -1,7 +1,10 @@
 /* global module */
 module.exports = function(grunt) {
     grunt.initConfig({
+        // Reads package.json configuration file
         pkg: grunt.file.readJSON('package.json'),
+
+        // CSS: SASS - input/output files and other options
         sass: {
             options: {},
             project: {
@@ -10,6 +13,7 @@ module.exports = function(grunt) {
                 }
             }
         },
+        // CSS: LESS - input output/files and other options
         less: {
             options: {},
             project: {
@@ -18,6 +22,7 @@ module.exports = function(grunt) {
                 }
             }
         },
+        // CSS: Contatination - input/output files and other options
         concat: {
             options: {
                 separator: '',
@@ -27,6 +32,7 @@ module.exports = function(grunt) {
                 dest: 'App_Themes/Theme/css/main-joined.css',
             }
         },
+        // CSS: Combine Media Queries - input/output files and other options
         cmq: {
             options: {
                 log: false
@@ -37,6 +43,7 @@ module.exports = function(grunt) {
                 }
             }
         },
+        // CSS: Autoprefix - input/output files and other options
         autoprefixer: {
             options: {},
             project: {
@@ -44,6 +51,7 @@ module.exports = function(grunt) {
                 dest: 'App_Themes/Theme/css/main-prefixed.css'
             }
         },
+        // CSS: Minification - input/output files and other options
         cssmin: {
             options: {
                 keepSpecialComments: 0,
@@ -55,6 +63,7 @@ module.exports = function(grunt) {
                 }
             }
         },
+        // CSS: Bless - input/output files and other options
         bless: {
             options: {
                 cacheBuster: true,
@@ -66,34 +75,9 @@ module.exports = function(grunt) {
                 }
             }
         },
-        connect: {
-            propject: {
-                options: {
-                    keepalive: true,
-                    base: '.',
-                    port: 3333,
-                    livereload: 3332
-                }
-            }
-        },
-        watch: {
-            options: {
-                livereload: 3332
-            },
 
-            less: {
-                files: ['**/*.scss', '**/*.less'],
-                tasks: ['compile'],
-            },
-            codekit: {
-                files: ['**/*.kit'],
-                tasks: ['codekit'],
-            },
-            uglify: {
-                files: ['App_Themes/Theme/js/**/*.js', '!App_Themes/Theme/js/combined.js'],
-                tasks: ['uglify']
-            }
-        },
+        // CodeKit - input/output
+
         codekit: {
             options: {
 
@@ -123,8 +107,44 @@ module.exports = function(grunt) {
                 }
             }
         },
+
+        // Web Server: HTTP + Live reload Port + Base URL
+
+        connect: {
+            project: {
+                options: {
+                    keepalive: true,
+                    base: '.',
+                    port: 3333,
+                    livereload: 3332
+                }
+            }
+        },
+
+        // Watcher + Live reload port number + Set up sets of source files + associated tasks 
+
+        watch: {
+            options: {
+                livereload: 3332
+            },
+            css: {
+                files: ['**/*.scss', '**/*.less'],
+                tasks: ['compile'],
+            },
+            codekit: {
+                files: ['**/*.kit'],
+                tasks: ['codekit'],
+            },
+            uglify: {
+                files: ['App_Themes/Theme/js/**/*.js', '!App_Themes/Theme/js/combined.js'],
+                tasks: ['uglify']
+            }
+        },
+
     });
 
+
+    // Load Tasks
 
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
@@ -138,10 +158,16 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-less');
 
+
+    // Register Default Task (when running grunt without a task)
+
     grunt.registerTask('default', ['watch']);
     
+    // Register a "Compile" Task (activate by running "grunt connect")
+
     grunt.registerTask('compile', 'compiles .kit,.scss, .less & .js files', function() {
 
+        // Run each fo our compile tasks one after the other
         grunt.task.run('sass', 'less', 'concat', 'cmq', 'autoprefixer', 'cssmin', 'bless');
 
 
